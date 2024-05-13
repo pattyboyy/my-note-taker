@@ -10,9 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/notes');
             if (!response.ok) throw new Error('Failed to fetch notes');
             const notes = await response.json();
+            console.log('Fetched notes:', notes); // Debug log
             noteList.innerHTML = notes.map(note => `<li>${note.title}</li>`).join('');
         } catch (error) {
-            console.error(error);
+            console.error('Error fetching notes:', error);
         }
     };
 
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             text: noteText.value,
         };
         try {
+            console.log('Saving note:', newNote); // Debug log
             const response = await fetch('/api/notes', {
                 method: 'POST',
                 headers: {
@@ -30,10 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(newNote),
             });
             if (!response.ok) throw new Error('Failed to save note');
+            const savedNote = await response.json();
+            console.log('Saved note:', savedNote); // Debug log
             await fetchNotes();
             clearNote();
         } catch (error) {
-            console.error(error);
+            console.error('Error saving note:', error);
         }
     };
 
@@ -47,4 +51,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchNotes();
 });
-
