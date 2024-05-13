@@ -6,9 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearNoteButton = document.getElementById('clear-note');
 
     const fetchNotes = async () => {
-        const response = await fetch('/api/notes');
-        const notes = await response.json();
-        noteList.innerHTML = notes.map(note => `<li>${note.title}</li>`).join('');
+        try {
+            const response = await fetch('/api/notes');
+            if (!response.ok) throw new Error('Failed to fetch notes');
+            const notes = await response.json();
+            noteList.innerHTML = notes.map(note => `<li>${note.title}</li>`).join('');
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const saveNote = async () => {
@@ -16,14 +21,20 @@ document.addEventListener('DOMContentLoaded', () => {
             title: noteTitle.value,
             text: noteText.value,
         };
-        await fetch('/api/notes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newNote),
-        });
-        fetchNotes();
+        try {
+            const response = await fetch('/api/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newNote),
+            });
+            if (!response.ok) throw new Error('Failed to save note');
+            await fetchNotes();
+            clearNote();
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const clearNote = () => {
@@ -36,3 +47,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchNotes();
 });
+
