@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    text-align: center;
+    margin: 20px;
+}
+
+main {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.note-list {
+    width: 40%;
+}
+
+.note-editor {
+    width: 50%;
+}
+
+.note-editor input,
+.note-editor textarea {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.note-editor button {
+    display: inline-block;
+    margin-right: 10px;
+}
