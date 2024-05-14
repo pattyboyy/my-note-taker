@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Fetched notes:', notes); // Debug log
             noteList.innerHTML = notes.map(note => `<li>${note.title}</li>`).join('');
         } catch (error) {
-            console.error('Error fetching notes:', error);
+            console.error(error);
         }
     };
 
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await fetchNotes();
             clearNote();
         } catch (error) {
-            console.error('Error saving note:', error);
+            console.error(error);
         }
     };
 
