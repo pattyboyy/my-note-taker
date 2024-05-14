@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('/api/notes');
             if (!response.ok) throw new Error('Failed to fetch notes');
+            console.log(response); // Debug log
             const notes = await response.json();
             console.log('Fetched notes:', notes); // Debug log
             noteList.innerHTML = notes.map(note => `<li>${note.title}</li>`).join('');
