@@ -27,15 +27,21 @@ app.get('/api/notes', (req, res) => {
 
 // API Route to add a new note
 app.post('/api/notes', (req, res) => {
-  const newNote = { ...req.body, id: uuidv4() };
+  const newNote = { ...req.body, id: uuidv4() };  // Assign a unique ID to the new note
 
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
-    if (err) throw err;
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Error reading data file" });
+    }
     const notes = JSON.parse(data);
     notes.push(newNote);
 
     fs.writeFile('./db/db.json', JSON.stringify(notes, null, 2), err => {
-      if (err) throw err;
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Error writing to data file" });
+      }
       res.json(newNote);
     });
   });
