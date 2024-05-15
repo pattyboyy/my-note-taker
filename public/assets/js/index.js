@@ -166,8 +166,8 @@ if (window.location.pathname === '/notes') {
     });
   };
 
-  const getAndRenderNotes = () => {
-    getNotes().then(renderNoteList);
+  const getAndRenderNotes = (searchTerm = '', selectedTags = []) => {
+    getNotes().then(notes => renderNoteList(notes, searchTerm, selectedTags));
   };
 
   saveNoteBtn.addEventListener('click', handleNoteSave);
@@ -189,18 +189,19 @@ if (window.location.pathname === '/notes') {
     }
   });
 
-  // Add event listeners for search and filter buttons
+  // Update event listeners for search and filter buttons
   searchButton.addEventListener('click', () => {
     const searchTerm = searchInput.value.trim();
     const selectedTags = tagsInput.value.split(',').map(tag => tag.trim());
-    getNotes().then(notes => renderNoteList(notes, searchTerm, selectedTags));
+    getAndRenderNotes(searchTerm, selectedTags);
   });
 
   filterButton.addEventListener('click', () => {
     const searchTerm = searchInput.value.trim();
     const selectedTags = tagsInput.value.split(',').map(tag => tag.trim());
-    getNotes().then(notes => renderNoteList(notes, searchTerm, selectedTags));
+    getAndRenderNotes(searchTerm, selectedTags);
   });
 
+  // Initial rendering of notes
   getAndRenderNotes();
 }
