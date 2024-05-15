@@ -160,25 +160,25 @@ if (window.location.pathname === '/notes') {
       emptyMessage.classList.add('list-group-item');
       emptyMessage.textContent = 'No notes found.';
       noteList.appendChild(emptyMessage);
-    } else {
-      filteredNotes.forEach(note => {
-        const li = document.createElement('li');
-        li.classList.add('list-group-item');
-        li.setAttribute('data-note-id', note.id);
-        li.innerHTML = `
-          <span>${note.title}</span>
-          <span class="float-right">${note.tags.join(', ')}</span>
-        `;
-        li.addEventListener('click', handleNoteView);
-  
-        const delBtn = document.createElement('i');
-        delBtn.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
-        delBtn.addEventListener('click', handleNoteDelete);
-        li.appendChild(delBtn);
-  
-        noteList.appendChild(li);
-      });
     }
+  
+    filteredNotes.forEach(note => {
+      const li = document.createElement('li');
+      li.classList.add('list-group-item');
+      li.setAttribute('data-note-id', note.id);
+      li.innerHTML = `
+        <span class="list-item-title">${note.title}</span>
+        <span class="float-right">${note.tags.join(', ')}</span>
+      `;
+      li.addEventListener('click', handleNoteView);
+  
+      const delBtn = document.createElement('i');
+      delBtn.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
+      delBtn.addEventListener('click', handleNoteDelete);
+      li.appendChild(delBtn);
+  
+      noteList.appendChild(li);
+    });
   };
 
   const getAndRenderNotes = (searchTerm = '', selectedTags = []) => {
