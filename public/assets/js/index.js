@@ -51,31 +51,29 @@ if (window.location.pathname === '/notes') {
       }
     });
 
-  const renderActiveNote = () => {
-    if (activeNote.id) {
-      noteTitle.setAttribute('readonly', true);
-      noteText.setAttribute('readonly', true);
-      noteTitle.value = activeNote.title;
-      noteText.value = activeNote.text;
-      tagButtons.forEach(button => {
-        button.classList.toggle('active', activeNote.tags.includes(button.getAttribute('data-tag')));
-      });
-      show(newNoteBtn);
-      hide(saveNoteBtn);
-      hide(clearBtn);
-    } else {
-      noteTitle.removeAttribute('readonly');
-      noteText.removeAttribute('readonly');
-      noteTitle.value = '';
-      noteText.value = '';
-      tagButtons.forEach(button => {
-        button.classList.remove('active');
-      });
-      hide(newNoteBtn);
-      show(saveNoteBtn);
-      show(clearBtn);
-    }
-  };
+    const renderActiveNote = () => {
+      if (activeNote.id) {
+        noteTitle.setAttribute('readonly', true);
+        noteText.setAttribute('readonly', true);
+        noteTitle.value = activeNote.title;
+        noteText.value = activeNote.text;
+        tagButtons.forEach(button => {
+          button.classList.toggle('active', activeNote.tags.includes(button.getAttribute('data-tag')));
+        });
+        show(newNoteBtn);
+        hide(saveNoteBtn);
+      } else {
+        noteTitle.removeAttribute('readonly');
+        noteText.removeAttribute('readonly');
+        noteTitle.value = '';
+        noteText.value = '';
+        tagButtons.forEach(button => {
+          button.classList.remove('active');
+        });
+        hide(newNoteBtn);
+        show(saveNoteBtn);
+      }
+    };
 
   const handleNoteSave = () => {
     const newNote = {
@@ -86,7 +84,10 @@ if (window.location.pathname === '/notes') {
     if (newNote.title && newNote.text) {
       saveNote(newNote).then(() => {
         getNotes().then(notes => renderNoteList(notes));
+        activeNote = {};
         renderActiveNote();
+        show(newNoteBtn);
+        hide(saveNoteBtn);
       });
     }
   };
