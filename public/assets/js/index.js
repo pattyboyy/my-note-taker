@@ -5,6 +5,7 @@ let saveNoteBtn;
 let newNoteBtn;
 let noteList;
 let clearBtn;
+let activeNote = {};
 
 if (window.location.pathname === '/notes') {
   noteForm = document.querySelector('.note-form');
@@ -15,7 +16,7 @@ if (window.location.pathname === '/notes') {
   clearBtn = document.querySelector('.clear-btn');
   noteList = document.querySelector('.list-group');
 
-  let activeNote = {};
+  const tagButtons = document.querySelectorAll('.tag-btn');
 
   const show = (elem) => {
     elem.style.display = 'inline';
@@ -50,42 +51,45 @@ if (window.location.pathname === '/notes') {
       }
     });
 
-    const renderActiveNote = () => {
-      if (activeNote.id) {
-        noteTitle.setAttribute('readonly', true);
-        noteText.setAttribute('readonly', true);
-        noteTitle.value = activeNote.title;
-        noteText.value = activeNote.text;
-        noteTags.value = activeNote.tags.join(', ');
-        show(newNoteBtn);
-        hide(saveNoteBtn);
-        hide(clearBtn);
-      } else {
-        noteTitle.removeAttribute('readonly');
-        noteText.removeAttribute('readonly');
-        noteTitle.value = '';
-        noteText.value = '';
-        noteTags.value = '';
-        hide(newNoteBtn);
-        hide(saveNoteBtn);
-        hide(clearBtn);
-      }
+  const renderActiveNote = () => {
+    if (activeNote.id) {
+      noteTitle.setAttribute('readonly', true);
+      noteText.setAttribute('readonly', true);
+      noteTitle.value = activeNote.title;
+      noteText.value = activeNote.text;
+      tagButtons.forEach(button => {
+        button.classList.toggle('active', activeNote.tags.includes(button.getAttribute('data-tag')));
+      });
+      show(newNoteBtn);
+      hide(saveNoteBtn);
+      hide(clearBtn);
+    } else {
+      noteTitle.removeAttribute('readonly');
+      noteText.removeAttribute('readonly');
+      noteTitle.value = '';
+      noteText.value = '';
+      tagButtons.forEach(button => {
+        button.classList.remove('active');
+      });
+      hide(newNoteBtn);
+      show(saveNoteBtn);
+      show(clearBtn);
+    }
+  };
+
+  const handleNoteSave = () => {
+    const newNote = {
+      title: noteTitle.value,
+      text: noteText.value,
+      tags: Array.from(document.querySelectorAll('.tag-btn.active')).map(btn => btn.getAttribute('data-tag'))
     };
-    
-    const handleNoteSave = () => {
-      const newNote = {
-        title: noteTitle.value,
-        text: noteText.value,
-        tags: noteTags.value.split(',').map(tag => tag.trim())
-      };
-      if (newNote.title && newNote.text) {
-        saveNote(newNote).then(() => {
-          getAndRenderNotes();
-          renderActiveNote();
-        });
-      }
-    };
-    
+    if (newNote.title && newNote.text) {
+      saveNote(newNote).then(() => {
+        getNotes().then(notes => renderNoteList(notes));
+        renderActiveNote();
+      });
+    }
+  };
 
   const handleNoteDelete = (e) => {
     e.stopPropagation();
@@ -96,7 +100,7 @@ if (window.location.pathname === '/notes') {
     }
 
     deleteNote(noteId).then(() => {
-      getAndRenderNotes();
+      getNotes().then(notes => renderNoteList(notes));
       renderActiveNote();
     });
   };
@@ -115,7 +119,7 @@ if (window.location.pathname === '/notes') {
 
   const renderNoteList = (notes) => {
     noteList.innerHTML = '';
-
+  
     if (notes.length === 0) {
       const emptyMessage = document.createElement('p');
       emptyMessage.textContent = 'No notes found.';
@@ -129,22 +133,26 @@ if (window.location.pathname === '/notes') {
           <span class="list-item-title">${note.title}</span>
           <span class="float-right">${note.tags.join(', ')}</span>
         `;
+  
+        // Add click event to view note details
         li.addEventListener('click', handleNoteView);
-
+  
+        // Add delete button to each note
         const delBtn = document.createElement('i');
         delBtn.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
         delBtn.addEventListener('click', handleNoteDelete);
         li.appendChild(delBtn);
-
+  
         noteList.appendChild(li);
       });
     }
   };
-
+  
   const getAndRenderNotes = () => {
     getNotes().then(notes => renderNoteList(notes));
   };
-
+  
+  // Event listeners for button clicks
   saveNoteBtn.addEventListener('click', handleNoteSave);
   newNoteBtn.addEventListener('click', () => {
     activeNote = {};
@@ -154,6 +162,7 @@ if (window.location.pathname === '/notes') {
     activeNote = {};
     renderActiveNote();
   });
+  
   noteForm.addEventListener('input', () => {
     if (!noteTitle.value.trim() && !noteText.value.trim()) {
       hide(saveNoteBtn);
@@ -163,6 +172,7 @@ if (window.location.pathname === '/notes') {
       show(clearBtn);
     }
   });
-
-  getAndRenderNotes();
-}
+  
+  // Initial loading of notes
+    getAndRenderNotes();
+  } // Add a closing curly brace here
