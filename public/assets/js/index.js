@@ -5,10 +5,6 @@ let saveNoteBtn;
 let newNoteBtn;
 let noteList;
 let clearBtn;
-let searchInput;
-let searchButton;
-let tagsInput;
-let filterButton;
 
 if (window.location.pathname === '/notes') {
   noteForm = document.querySelector('.note-form');
@@ -18,30 +14,6 @@ if (window.location.pathname === '/notes') {
   newNoteBtn = document.querySelector('.new-note');
   clearBtn = document.querySelector('.clear-btn');
   noteList = document.querySelector('.list-group');
-
-  // Add search input and button
-  searchInput = document.createElement('input');
-  searchInput.type = 'text';
-  searchInput.placeholder = 'Search notes...';
-  searchInput.classList.add('form-control', 'mb-2');
-  document.querySelector('.list-container .card').prepend(searchInput);
-
-  searchButton = document.createElement('button');
-  searchButton.textContent = 'Search';
-  searchButton.classList.add('btn', 'btn-primary', 'mb-2');
-  document.querySelector('.list-container .card').insertBefore(searchButton, searchInput.nextSibling);
-
-  // Add tags input and button
-  tagsInput = document.createElement('input');
-  tagsInput.type = 'text';
-  tagsInput.placeholder = 'Filter by tags (comma-separated)...';
-  tagsInput.classList.add('form-control', 'mb-2');
-  document.querySelector('.list-container .card').insertBefore(tagsInput, searchButton.nextSibling);
-
-  filterButton = document.createElement('button');
-  filterButton.textContent = 'Filter';
-  filterButton.classList.add('btn', 'btn-primary', 'mb-2');
-  document.querySelector('.list-container .card').insertBefore(filterButton, tagsInput.nextSibling);
 
   let activeNote = {};
 
@@ -138,29 +110,15 @@ if (window.location.pathname === '/notes') {
       });
   };
 
-  const renderNoteList = (notes, searchTerm = '', selectedTags = []) => {
-    console.log('Rendering notes:', notes);
-    console.log('Search term:', searchTerm);
-    console.log('Selected tags:', selectedTags);
-  
-    const filteredNotes = notes.filter(note => {
-      const matchesSearch = note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        note.text.toLowerCase().includes(searchTerm.toLowerCase());
-      const noteTags = note.tags.map(tag => tag.toLowerCase());
-      const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => noteTags.includes(tag.toLowerCase()));
-      return matchesSearch && matchesTags;
-    });
-  
-    console.log('Filtered notes:', filteredNotes);
-  
+  const renderNoteList = (notes) => {
     noteList.innerHTML = '';
-  
-    if (filteredNotes.length === 0) {
+
+    if (notes.length === 0) {
       const emptyMessage = document.createElement('p');
       emptyMessage.textContent = 'No notes found.';
       noteList.appendChild(emptyMessage);
     } else {
-      filteredNotes.forEach(note => {
+      notes.forEach(note => {
         const li = document.createElement('li');
         li.classList.add('list-group-item');
         li.setAttribute('data-note-id', note.id);
@@ -169,22 +127,19 @@ if (window.location.pathname === '/notes') {
           <span class="float-right">${note.tags.join(', ')}</span>
         `;
         li.addEventListener('click', handleNoteView);
-  
+
         const delBtn = document.createElement('i');
         delBtn.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
         delBtn.addEventListener('click', handleNoteDelete);
         li.appendChild(delBtn);
-  
+
         noteList.appendChild(li);
       });
     }
   };
 
-  const getAndRenderNotes = (searchTerm = '', selectedTags = []) => {
-    console.log('Getting notes with search term:', searchTerm);
-    console.log('Getting notes with selected tags:', selectedTags);
-
-    getNotes().then(notes => renderNoteList(notes, searchTerm, selectedTags));
+  const getAndRenderNotes = () => {
+    getNotes().then(notes => renderNoteList(notes));
   };
 
   saveNoteBtn.addEventListener('click', handleNoteSave);
@@ -204,22 +159,6 @@ if (window.location.pathname === '/notes') {
       show(saveNoteBtn);
       show(clearBtn);
     }
-  });
-
-  searchButton.addEventListener('click', () => {
-    const searchTerm = searchInput.value.trim();
-    const selectedTags = tagsInput.value.split(',').map(tag => tag.trim());
-    console.log('Search button clicked with term:', searchTerm);
-    console.log('Search button clicked with tags:', selectedTags);
-    getAndRenderNotes(searchTerm, selectedTags);
-  });
-
-  filterButton.addEventListener('click', () => {
-    const searchTerm = searchInput.value.trim();
-    const selectedTags = tagsInput.value.split(',').map(tag => tag.trim());
-    console.log('Filter button clicked with term:', searchTerm);
-    console.log('Filter button clicked with tags:', selectedTags);
-    getAndRenderNotes(searchTerm, selectedTags);
   });
 
   getAndRenderNotes();
