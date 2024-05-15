@@ -107,10 +107,16 @@ if (window.location.pathname === '/notes') {
 
     // Function to set the active note and display it
     const handleNoteView = (e) => {
-        e.preventDefault();
-        const noteId = e.target.closest('.list-group-item').getAttribute('data-note-id');
-        activeNote = notes.find(note => note.id === noteId);
-        renderActiveNote();
+      e.preventDefault();
+      const noteId = e.target.closest('.list-group-item').getAttribute('data-note-id');
+    
+      // Make an API call to fetch the note details
+      fetch(`/api/notes/${noteId}`)
+        .then(response => response.json())
+        .then(note => {
+          activeNote = note;
+          renderActiveNote();
+        });
     };
 
     // Function to render the list of note titles

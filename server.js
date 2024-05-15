@@ -17,11 +17,21 @@ app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
 
-// API Route to get notes
-app.get('/api/notes', (req, res) => {
+
+// API Route to get a specific note by ID
+app.get('/api/notes/:id', (req, res) => {
+  const noteId = req.params.id;
+
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) throw err;
-    res.json(JSON.parse(data));
+    const notes = JSON.parse(data);
+    const note = notes.find(note => note.id === noteId);
+
+    if (note) {
+      res.json(note);
+    } else {
+      res.status(404).json({ error: 'Note not found' });
+    }
   });
 });
 
