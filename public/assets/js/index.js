@@ -142,18 +142,19 @@ if (window.location.pathname === '/notes') {
     console.log('Rendering notes:', notes);
     console.log('Search term:', searchTerm);
     console.log('Selected tags:', selectedTags);
-
+  
     const filteredNotes = notes.filter(note => {
       const matchesSearch = note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         note.text.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => note.tags.includes(tag));
+      const noteTags = note.tags.map(tag => tag.toLowerCase());
+      const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => noteTags.includes(tag.toLowerCase()));
       return matchesSearch && matchesTags;
     });
-
+  
     console.log('Filtered notes:', filteredNotes);
-
+  
     noteList.innerHTML = '';
-
+  
     if (filteredNotes.length === 0) {
       const emptyMessage = document.createElement('li');
       emptyMessage.classList.add('list-group-item');
@@ -169,12 +170,12 @@ if (window.location.pathname === '/notes') {
           <span class="float-right">${note.tags.join(', ')}</span>
         `;
         li.addEventListener('click', handleNoteView);
-
+  
         const delBtn = document.createElement('i');
         delBtn.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
         delBtn.addEventListener('click', handleNoteDelete);
         li.appendChild(delBtn);
-
+  
         noteList.appendChild(li);
       });
     }
