@@ -75,22 +75,23 @@ if (window.location.pathname === '/notes') {
       }
     };
 
-  const handleNoteSave = () => {
-    const newNote = {
-      title: noteTitle.value,
-      text: noteText.value,
-      tags: Array.from(document.querySelectorAll('.tag-btn.active')).map(btn => btn.getAttribute('data-tag'))
+    const handleNoteSave = (event) => {
+      event.preventDefault();
+      const newNote = {
+        title: noteTitle.value,
+        text: noteText.value,
+        tags: Array.from(document.querySelectorAll('.tag-btn.active')).map(btn => btn.getAttribute('data-tag'))
+      };
+      if (newNote.title && newNote.text) {
+        saveNote(newNote).then(() => {
+          getNotes().then(notes => renderNoteList(notes));
+          activeNote = {};
+          renderActiveNote();
+          show(newNoteBtn);
+          hide(saveNoteBtn);
+        });
+      }
     };
-    if (newNote.title && newNote.text) {
-      saveNote(newNote).then(() => {
-        getNotes().then(notes => renderNoteList(notes));
-        activeNote = {};
-        renderActiveNote();
-        show(newNoteBtn);
-        hide(saveNoteBtn);
-      });
-    }
-  };
 
   const handleNoteDelete = (e) => {
     e.stopPropagation();
@@ -150,7 +151,7 @@ if (window.location.pathname === '/notes') {
     getNotes().then(notes => renderNoteList(notes));
   };
 
-  saveNoteBtn.addEventListener('click', handleNoteSave);
+  
   newNoteBtn.addEventListener('click', () => {
     activeNote = {};
     renderActiveNote();
