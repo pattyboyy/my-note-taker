@@ -156,29 +156,33 @@ if (window.location.pathname === '/notes') {
     noteList.innerHTML = '';
   
     if (filteredNotes.length === 0) {
-      const emptyMessage = document.createElement('li');
-      emptyMessage.classList.add('list-group-item');
+      const emptyMessage = document.createElement('p');
       emptyMessage.textContent = 'No notes found.';
       noteList.appendChild(emptyMessage);
+    } else {
+      const ul = document.createElement('ul');
+      ul.classList.add('list-group');
+  
+      filteredNotes.forEach(note => {
+        const li = document.createElement('li');
+        li.classList.add('list-group-item');
+        li.setAttribute('data-note-id', note.id);
+        li.innerHTML = `
+          <span class="list-item-title">${note.title}</span>
+          <span class="float-right">${note.tags.join(', ')}</span>
+        `;
+        li.addEventListener('click', handleNoteView);
+  
+        const delBtn = document.createElement('i');
+        delBtn.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
+        delBtn.addEventListener('click', handleNoteDelete);
+        li.appendChild(delBtn);
+  
+        ul.appendChild(li);
+      });
+  
+      noteList.appendChild(ul);
     }
-  
-    filteredNotes.forEach(note => {
-      const li = document.createElement('li');
-      li.classList.add('list-group-item');
-      li.setAttribute('data-note-id', note.id);
-      li.innerHTML = `
-        <span class="list-item-title">${note.title}</span>
-        <span class="float-right">${note.tags.join(', ')}</span>
-      `;
-      li.addEventListener('click', handleNoteView);
-  
-      const delBtn = document.createElement('i');
-      delBtn.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
-      delBtn.addEventListener('click', handleNoteDelete);
-      li.appendChild(delBtn);
-  
-      noteList.appendChild(li);
-    });
   };
 
   const getAndRenderNotes = (searchTerm = '', selectedTags = []) => {
