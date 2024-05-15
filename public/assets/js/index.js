@@ -160,9 +160,6 @@ if (window.location.pathname === '/notes') {
       emptyMessage.textContent = 'No notes found.';
       noteList.appendChild(emptyMessage);
     } else {
-      const ul = document.createElement('ul');
-      ul.classList.add('list-group');
-  
       filteredNotes.forEach(note => {
         const li = document.createElement('li');
         li.classList.add('list-group-item');
@@ -178,10 +175,8 @@ if (window.location.pathname === '/notes') {
         delBtn.addEventListener('click', handleNoteDelete);
         li.appendChild(delBtn);
   
-        ul.appendChild(li);
+        noteList.appendChild(li);
       });
-  
-      noteList.appendChild(ul);
     }
   };
 
