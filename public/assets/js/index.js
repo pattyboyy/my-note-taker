@@ -28,6 +28,7 @@ const hide = (elem) => {
 
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
+let notesCache = [];
 
 const getNotes = () =>
   fetch('/api/notes', {
@@ -35,23 +36,9 @@ const getNotes = () =>
     headers: {
       'Content-Type': 'application/json'
     }
-  }).then(response => response.json());
-
-const saveNote = (note) =>
-  fetch('/api/notes', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(note)
-  }).then(response => response.json());
-
-const deleteNote = (id) =>
-  fetch(`/api/notes/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+  }).then(response => response.json()).then(data => {
+      notesCache = data;
+      return data;
   });
 
 const renderActiveNote = () => {
@@ -73,43 +60,11 @@ const renderActiveNote = () => {
   }
 };
 
-const handleNoteSave = () => {
-  const newNote = {
-    title: noteTitle.value,
-    text: noteText.value
-  };
-  saveNote(newNote).then(() => {
-    getAndRenderNotes();
-    renderActiveNote();
-  });
-};
-
-const handleNoteDelete = (e) => {
-  // Prevents the click listener for the list from being called when the button inside of it is clicked
-  e.stopPropagation();
-
-  const noteId = e.target.closest('.list-group-item').dataset.noteId;
-
-  if (activeNote.id === noteId) {
-    activeNote = {};
-  }
-
-  deleteNote(noteId).then(() => {
-    getAndRenderNotes();
-    renderActiveNote();
-  });
-};
-
 const handleNoteView = (e) => {
-  e.preventDefault();
-  const noteId = e.target.closest('.list-group-item').dataset.noteId;
-  activeNote = notes.find(note => note.id === noteId);
-  renderActiveNote();
-};
-
-const handleNewNoteView = () => {
-  activeNote = {};
-  renderActiveNote();
+    e.preventDefault();
+    const noteId = e.target.closest('.list-group-item').dataset.noteId;
+    activeNote = notesCache.find(note => note.id === noteId);
+    renderActiveNote();
 };
 
 const renderNoteList = (notes) => {
