@@ -1,1 +1,14 @@
-[]
+[
+    {
+      "title": "Note 1",
+      "text": "Content of Note 1",
+      "id": "1",
+      "tags": ["tag1", "tag2"]
+    },
+    {
+      "title": "Note 2",
+      "text": "Content of Note 2",
+      "id": "2",
+      "tags": ["tag1", "tag3"]
+    }
+  ]
