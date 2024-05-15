@@ -44,7 +44,11 @@ app.get('/api/notes/:id', (req, res) => {
 
 // API Route to add a new note
 app.post('/api/notes', (req, res) => {
-  const newNote = { ...req.body, id: uuidv4() };  // Assign a unique ID to the new note
+  const newNote = {
+    ...req.body,
+    id: uuidv4(),
+    tags: req.body.tags || [] // Ensure tags property exists as an array
+  };
 
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) {

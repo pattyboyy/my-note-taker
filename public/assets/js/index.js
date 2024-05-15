@@ -139,12 +139,18 @@ if (window.location.pathname === '/notes') {
   };
 
   const renderNoteList = (notes, searchTerm = '', selectedTags = []) => {
+    console.log('Rendering notes:', notes);
+    console.log('Search term:', searchTerm);
+    console.log('Selected tags:', selectedTags);
+
     const filteredNotes = notes.filter(note => {
       const matchesSearch = note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         note.text.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => note.tags.includes(tag));
       return matchesSearch && matchesTags;
     });
+
+    console.log('Filtered notes:', filteredNotes);
 
     noteList.innerHTML = '';
     filteredNotes.forEach(note => {
@@ -167,6 +173,9 @@ if (window.location.pathname === '/notes') {
   };
 
   const getAndRenderNotes = (searchTerm = '', selectedTags = []) => {
+    console.log('Getting notes with search term:', searchTerm);
+    console.log('Getting notes with selected tags:', selectedTags);
+
     getNotes().then(notes => renderNoteList(notes, searchTerm, selectedTags));
   };
 
@@ -189,19 +198,21 @@ if (window.location.pathname === '/notes') {
     }
   });
 
-  // Update event listeners for search and filter buttons
   searchButton.addEventListener('click', () => {
     const searchTerm = searchInput.value.trim();
     const selectedTags = tagsInput.value.split(',').map(tag => tag.trim());
+    console.log('Search button clicked with term:', searchTerm);
+    console.log('Search button clicked with tags:', selectedTags);
     getAndRenderNotes(searchTerm, selectedTags);
   });
 
   filterButton.addEventListener('click', () => {
     const searchTerm = searchInput.value.trim();
     const selectedTags = tagsInput.value.split(',').map(tag => tag.trim());
+    console.log('Filter button clicked with term:', searchTerm);
+    console.log('Filter button clicked with tags:', selectedTags);
     getAndRenderNotes(searchTerm, selectedTags);
   });
 
-  // Initial rendering of notes
   getAndRenderNotes();
 }
