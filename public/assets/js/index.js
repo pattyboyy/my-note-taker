@@ -119,7 +119,7 @@ if (window.location.pathname === '/notes') {
 
   const renderNoteList = (notes) => {
     noteList.innerHTML = '';
-  
+
     if (notes.length === 0) {
       const emptyMessage = document.createElement('p');
       emptyMessage.textContent = 'No notes found.';
@@ -133,26 +133,22 @@ if (window.location.pathname === '/notes') {
           <span class="list-item-title">${note.title}</span>
           <span class="float-right">${note.tags.join(', ')}</span>
         `;
-  
-        // Add click event to view note details
         li.addEventListener('click', handleNoteView);
-  
-        // Add delete button to each note
+
         const delBtn = document.createElement('i');
         delBtn.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
         delBtn.addEventListener('click', handleNoteDelete);
         li.appendChild(delBtn);
-  
+
         noteList.appendChild(li);
       });
     }
   };
-  
+
   const getAndRenderNotes = () => {
     getNotes().then(notes => renderNoteList(notes));
   };
-  
-  // Event listeners for button clicks
+
   saveNoteBtn.addEventListener('click', handleNoteSave);
   newNoteBtn.addEventListener('click', () => {
     activeNote = {};
@@ -162,7 +158,6 @@ if (window.location.pathname === '/notes') {
     activeNote = {};
     renderActiveNote();
   });
-  
   noteForm.addEventListener('input', () => {
     if (!noteTitle.value.trim() && !noteText.value.trim()) {
       hide(saveNoteBtn);
@@ -172,7 +167,6 @@ if (window.location.pathname === '/notes') {
       show(clearBtn);
     }
   });
-  
-  // Initial loading of notes
-    getAndRenderNotes();
-  } // Add a closing curly brace here
+
+  getAndRenderNotes();
+}
