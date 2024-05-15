@@ -50,39 +50,42 @@ if (window.location.pathname === '/notes') {
       }
     });
 
-  const renderActiveNote = () => {
-    if (activeNote.id) {
-      noteTitle.setAttribute('readonly', true);
-      noteText.setAttribute('readonly', true);
-      noteTitle.value = activeNote.title;
-      noteText.value = activeNote.text;
-      show(newNoteBtn);
-      hide(saveNoteBtn);
-      hide(clearBtn);
-    } else {
-      noteTitle.removeAttribute('readonly');
-      noteText.removeAttribute('readonly');
-      noteTitle.value = '';
-      noteText.value = '';
-      hide(newNoteBtn);
-      hide(saveNoteBtn);
-      hide(clearBtn);
-    }
-  };
-
-  const handleNoteSave = () => {
-    const newNote = {
-      title: noteTitle.value,
-      text: noteText.value,
-      tags: noteTitle.value.match(/#\w+/g) || [] // Extract tags from the title
+    const renderActiveNote = () => {
+      if (activeNote.id) {
+        noteTitle.setAttribute('readonly', true);
+        noteText.setAttribute('readonly', true);
+        noteTitle.value = activeNote.title;
+        noteText.value = activeNote.text;
+        noteTags.value = activeNote.tags.join(', ');
+        show(newNoteBtn);
+        hide(saveNoteBtn);
+        hide(clearBtn);
+      } else {
+        noteTitle.removeAttribute('readonly');
+        noteText.removeAttribute('readonly');
+        noteTitle.value = '';
+        noteText.value = '';
+        noteTags.value = '';
+        hide(newNoteBtn);
+        hide(saveNoteBtn);
+        hide(clearBtn);
+      }
     };
-    if (newNote.title && newNote.text) {
-      saveNote(newNote).then(() => {
-        getAndRenderNotes();
-        renderActiveNote();
-      });
-    }
-  };
+    
+    const handleNoteSave = () => {
+      const newNote = {
+        title: noteTitle.value,
+        text: noteText.value,
+        tags: noteTags.value.split(',').map(tag => tag.trim())
+      };
+      if (newNote.title && newNote.text) {
+        saveNote(newNote).then(() => {
+          getAndRenderNotes();
+          renderActiveNote();
+        });
+      }
+    };
+    
 
   const handleNoteDelete = (e) => {
     e.stopPropagation();
