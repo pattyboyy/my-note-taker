@@ -102,10 +102,19 @@ const handleNoteView = (e) => {
   renderActiveNote();
 };
 
-// Sets the activeNote to and empty object and allows the user to enter a new note
-const handleNewNoteView = (e) => {
+// Sets the activeNote to an empty object and allows the user to enter a new note
+const handleNewNoteView = () => {
   activeNote = {};
   renderActiveNote();
+};
+
+// Render the save button if the note title or text is not empty
+const handleRenderSaveBtn = () => {
+  if (!noteTitle.value.trim() || !noteText.value.trim()) {
+    hide(saveNoteBtn);
+  } else {
+    show(saveNoteBtn);
+  }
 };
 
 // Render the list of note titles
