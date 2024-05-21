@@ -13,20 +13,11 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// HTML Routes
-app.get('/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/notes.html'));
-});
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
-});
-
 // API Routes
 app.get('/api/notes', (req, res) => {
   fs.readFile(path.join(__dirname, 'db/db.json'), 'utf8', (err, data) => {
     if (err) {
-      console.error(err);
+      console.error('Unable to read notes', err);
       return res.status(500).json({ error: 'Unable to read notes' });
     }
     res.json(JSON.parse(data));
@@ -42,7 +33,7 @@ app.post('/api/notes', (req, res) => {
 
   fs.readFile(path.join(__dirname, 'db/db.json'), 'utf8', (err, data) => {
     if (err) {
-      console.error(err);
+      console.error('Unable to read notes', err);
       return res.status(500).json({ error: 'Unable to read notes' });
     }
 
@@ -51,7 +42,7 @@ app.post('/api/notes', (req, res) => {
 
     fs.writeFile(path.join(__dirname, 'db/db.json'), JSON.stringify(notes), (err) => {
       if (err) {
-        console.error(err);
+        console.error('Unable to save note', err);
         return res.status(500).json({ error: 'Unable to save note' });
       }
       res.json(newNote);
@@ -65,7 +56,7 @@ app.delete('/api/notes/:id', (req, res) => {
 
   fs.readFile(path.join(__dirname, 'db/db.json'), 'utf8', (err, data) => {
     if (err) {
-      console.error(err);
+      console.error('Unable to read notes', err);
       return res.status(500).json({ error: 'Unable to read notes' });
     }
 
@@ -74,12 +65,21 @@ app.delete('/api/notes/:id', (req, res) => {
 
     fs.writeFile(path.join(__dirname, 'db/db.json'), JSON.stringify(notes), (err) => {
       if (err) {
-        console.error(err);
+        console.error('Unable to delete note', err);
         return res.status(500).json({ error: 'Unable to delete note' });
       }
       res.sendStatus(204);
     });
   });
+});
+
+// HTML Routes
+app.get('/notes', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/notes.html'));
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.listen(PORT, () => {
