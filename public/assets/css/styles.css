@@ -77,6 +77,11 @@ body {
   cursor: pointer;
 }
 
-.save-note, .new-note, .clear-btn {
-  display: none;
+
+.btn {
+  margin-right: 10px;
+}
+
+.btn i {
+  margin-right: 5px;
 }
