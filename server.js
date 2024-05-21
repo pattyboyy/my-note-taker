@@ -1,7 +1,7 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
+const uniqid = require('uniqid');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,87 +9,79 @@ const PORT = process.env.PORT || 3000;
 // Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from the 'public' directory
 app.use(express.static('public'));
 
-// Routes
-// HTML Route for notes page
+// HTML Routes
 app.get('/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/notes.html'));
+  res.sendFile(path.join(__dirname, 'public/notes.html'));
 });
 
-// API Route to get notes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+// API Routes
 app.get('/api/notes', (req, res) => {
-  fs.readFile('./db/db.json', 'utf8', (err, data) => {
-    if (err) throw err;
+  fs.readFile('db/db.json', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Unable to read notes' });
+    }
     res.json(JSON.parse(data));
   });
 });
 
-// API Route to get a specific note by ID
-app.get('/api/notes/:id', (req, res) => {
-  const noteId = req.params.id;
-
-  fs.readFile('./db/db.json', 'utf8', (err, data) => {
-    if (err) throw err;
-    const notes = JSON.parse(data);
-    const note = notes.find(note => note.id === noteId);
-
-    if (note) {
-      res.json(note);
-    } else {
-      res.status(404).json({ error: 'Note not found' });
-    }
-  });
-});
-
-// API Route to add a new note
 app.post('/api/notes', (req, res) => {
   const newNote = {
-    ...req.body,
-    id: uuidv4(),
-    tags: req.body.tags || [] // Ensure tags property exists as an array
+    id: uniqid(),
+    title: req.body.title,
+    text: req.body.text,
   };
 
-  fs.readFile('./db/db.json', 'utf8', (err, data) => {
+  fs.readFile('db/db.json', 'utf8', (err, data) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: "Error reading data file" });
+      return res.status(500).json({ error: 'Unable to read notes' });
     }
+
     const notes = JSON.parse(data);
     notes.push(newNote);
 
-    fs.writeFile('./db/db.json', JSON.stringify(notes, null, 2), err => {
+    fs.writeFile('db/db.json', JSON.stringify(notes), (err) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({ error: "Error writing to data file" });
+        return res.status(500).json({ error: 'Unable to save note' });
       }
       res.json(newNote);
     });
   });
 });
 
-// Bonus: API Route to delete a note
+// Bonus: DELETE Route
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
 
-  fs.readFile('./db/db.json', 'utf8', (err, data) => {
-    if (err) throw err;
-    const notes = JSON.parse(data);
-    const filteredNotes = notes.filter(note => note.id !== noteId);
+  fs.readFile('db/db.json', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Unable to read notes' });
+    }
 
-    fs.writeFile('./db/db.json', JSON.stringify(filteredNotes, null, 2), err => {
-      if (err) throw err;
-      res.json({ msg: 'Note deleted' });
+    let notes = JSON.parse(data);
+    notes = notes.filter((note) => note.id !== noteId);
+
+    fs.writeFile('db/db.json', JSON.stringify(notes), (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Unable to delete note' });
+      }
+      res.sendStatus(204);
     });
   });
 });
 
-// HTML Route for any other path
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/index.html'));
-});
-
-// Listening on PORT
 app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
