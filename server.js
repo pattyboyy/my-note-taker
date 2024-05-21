@@ -50,7 +50,7 @@ app.post('/api/notes', (req, res) => {
   });
 });
 
-// Bonus: DELETE Route
+// DELETE Route
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
 
