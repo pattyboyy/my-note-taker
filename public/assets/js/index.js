@@ -31,6 +31,11 @@ const getNotes = () =>
     headers: {
       'Content-Type': 'application/json',
     },
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
   });
 
 const saveNote = (note) =>
@@ -40,6 +45,11 @@ const saveNote = (note) =>
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(note),
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
   });
 
 const deleteNote = (id) =>
@@ -48,6 +58,10 @@ const deleteNote = (id) =>
     headers: {
       'Content-Type': 'application/json',
     },
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
   });
 
 const renderActiveNote = () => {
@@ -119,7 +133,7 @@ const handleRenderSaveBtn = () => {
 
 // Render the list of note titles
 const renderNoteList = async (notes) => {
-  let jsonNotes = await notes.json();
+  let jsonNotes = await notes;
   if (window.location.pathname === '/notes') {
     noteList.forEach((el) => (el.innerHTML = ''));
   }
