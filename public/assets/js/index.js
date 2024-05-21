@@ -25,43 +25,63 @@ const hide = (elem) => {
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
-const getNotes = () =>
+const getNotes = () => 
   fetch('/api/notes', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then(response => {
+  })
+  .then(response => {
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
     return response.json();
+  })
+  .then(data => {
+    console.log('Fetched notes:', data); // Debugging log
+    return data;
+  })
+  .catch(error => {
+    console.error('Error fetching notes:', error); // Debugging log
   });
 
-const saveNote = (note) =>
+const saveNote = (note) => 
   fetch('/api/notes', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(note),
-  }).then(response => {
+  })
+  .then(response => {
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
     return response.json();
+  })
+  .then(data => {
+    console.log('Saved note:', data); // Debugging log
+    return data;
+  })
+  .catch(error => {
+    console.error('Error saving note:', error); // Debugging log
   });
 
-const deleteNote = (id) =>
+const deleteNote = (id) => 
   fetch(`/api/notes/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then(response => {
+  })
+  .then(response => {
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
+  })
+  .catch(error => {
+    console.error('Error deleting note:', error); // Debugging log
   });
 
 const renderActiveNote = () => {
@@ -134,6 +154,7 @@ const handleRenderSaveBtn = () => {
 // Render the list of note titles
 const renderNoteList = async (notes) => {
   let jsonNotes = await notes;
+  console.log('Rendering notes:', jsonNotes); // Debugging log
   if (window.location.pathname === '/notes') {
     noteList.forEach((el) => (el.innerHTML = ''));
   }
