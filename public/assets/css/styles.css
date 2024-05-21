@@ -76,3 +76,7 @@ body {
   padding: 20px;
   cursor: pointer;
 }
+
+.save-note, .new-note, .clear-btn {
+  display: none;
+}
