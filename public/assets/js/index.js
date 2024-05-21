@@ -34,6 +34,7 @@ const getNotes = () =>
   })
   .then(response => {
     if (!response.ok) {
+      console.error('Network response was not ok:', response.statusText);
       throw new Error('Network response was not ok');
     }
     return response.json();
@@ -56,6 +57,7 @@ const saveNote = (note) =>
   })
   .then(response => {
     if (!response.ok) {
+      console.error('Network response was not ok:', response.statusText);
       throw new Error('Network response was not ok');
     }
     return response.json();
@@ -77,6 +79,7 @@ const deleteNote = (id) =>
   })
   .then(response => {
     if (!response.ok) {
+      console.error('Network response was not ok:', response.statusText);
       throw new Error('Network response was not ok');
     }
   })
@@ -155,6 +158,10 @@ const handleRenderSaveBtn = () => {
 const renderNoteList = async (notes) => {
   let jsonNotes = await notes;
   console.log('Rendering notes:', jsonNotes); // Debugging log
+  if (!jsonNotes) {
+    console.error('No notes found:', jsonNotes); // Debugging log
+    return;
+  }
   if (window.location.pathname === '/notes') {
     noteList.forEach((el) => (el.innerHTML = ''));
   }
